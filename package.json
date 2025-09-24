@@ -1,0 +1,18 @@
+{
+  "name": "xg7-dc-rich-presence",
+  "version": "BETA-1.0",
+  "main": "dist/main.js",
+  "devDependencies": {
+    "@types/discord-rpc": "^4.0.9",
+    "@types/node": "^24.5.2",
+    "electron": "^38.1.2",
+    "typescript": "^5.9.2"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && electron ."
+  },
+  "dependencies": {
+    "discord-rpc": "^4.0.1"
+  }
+}
