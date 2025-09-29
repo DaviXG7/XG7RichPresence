@@ -13,6 +13,7 @@
     "start": "npm run build && electron ."
   },
   "dependencies": {
-    "discord-rpc": "^4.0.1"
+    "@xhayper/discord-rpc": "^1.3.0",
+    "discord.js": "^14.22.1"
   }
 }

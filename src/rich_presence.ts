@@ -1,33 +1,52 @@
-import RPC, {Presence} from 'discord-rpc';
+import {Client, SetActivity} from "@xhayper/discord-rpc";
 
-const rpc = new RPC.Client({
-    transport: "ipc"
-})
+//1167899920334868540
 
-const clientID = "1167899920334868540"
+export class RichPresence {
 
-let presence: Presence;
+    activity: SetActivity;
+    client: Client | undefined;
 
-rpc.on('ready', async () => {
-    await rpc.setActivity({
+    constructor() {
 
-        partySize: 10,
-        partyMax: 20,
-        details: "Jogando Minecraft",
-        state: "Explorando o Nether",
-        startTimestamp: new Date(),
-        largeImageKey: "large",
-        largeImageText: "Minecraft Oficial",
-        buttons: [
-            {label: "Entrar no servidor", url: "https://discord.gg/xxxx"},
-            {label: "asdasdasd no site", url: "https://meusite.com"}
-        ]
-    });
+        this.activity = {
+            state: "",
+            type: 0,
+            partySize: 0,
+            partyMax: 0,
+            details: "",
+            startTimestamp: new Date(),
+            endTimestamp: new Date(),
+            largeImageKey: "",
+            largeImageText: "",
+            buttons: [
+                {label: "", url: ""},
+                {label: "", url: ""}
+            ],
+        };
 
-    console.log("Client ready!")
-});
+    }
 
-rpc.login({clientId: clientID }).catch(console.error);
+    setActivity(activity: SetActivity) {
+        this.activity = activity;
+        if (this.client) this.client.user?.setActivity(this.activity);
 
-rpc.login({clientId: clientID }).catch(console.error);
+    }
 
+    login(clientID: string) {
+
+        if (!this.client) {
+            this.client = new Client({ clientId: clientID })
+        }
+
+        this.client.on("ready", () => {
+            this.setActivity(this.activity);
+        })
+
+        this.client.login().catch(console.error);
+
+    }
+
+
+
+}

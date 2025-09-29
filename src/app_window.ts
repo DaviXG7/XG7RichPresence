@@ -20,6 +20,8 @@ export function loadWindow(winConfig: WindowConfiguration) {
     win = new BrowserWindow({
         height: winConfig.height,
         width: winConfig.width,
+        frame: false,
+        titleBarStyle: "hidden",
         webPreferences: {
             nodeIntegration: true,
         }
@@ -27,7 +29,7 @@ export function loadWindow(winConfig: WindowConfiguration) {
 
     win.loadURL(
         url.format({
-            pathname: path.join(__dirname, "..", "src", "index.html"),
+            pathname: path.join(__dirname, "..", "src", "frontend", "index.html"),
             protocol: "file",
             slashes: true
         })
