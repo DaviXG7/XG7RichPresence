@@ -3,49 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Document</title>
-    <style>
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-        }
-    </style>
+    <title>Discord Rich Presence Preview</title>
+    <link rel="stylesheet" href="index.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
 </head>
 <body>
-    <div class="input">
-        <input type="text" placeholder="ID">
-        <select placeholder="type">
-            <option value="0">PLAYING</option>
-            <option value="1">STREAMING</option>
-            <option value="2">WATCHING</option>
-            <option value="3">LISTENING</option>
-            <option value="5">COMPETING</option>
-        </select>
-        <input onchange="" type="text" placeholder="Details">
-        <input type="text" placeholder="State">
+<div class="container">
+    <div class="inputs grid grid-cols-4 gap-4">
+            <h1 class="text-2xl col-span-full">Principal</h1>
+                <input class="col-span-2" type="text" placeholder="ID">
+                <select class="col-span-2">
+                    <option value="0">PLAYING</option>
+                    <option value="1">STREAMING</option>
+                    <option value="2">WATCHING</option>
+                    <option value="3">LISTENING</option>
+                    <option value="5">COMPETING</option>
+                </select>
 
+
+        <input class="col-span-full" type="text" placeholder="Details">
+
+        <h1 class="text-2xl col-span-full">Party</h1>
+
+        <input class="col-span-2" type="text" placeholder="State">
+        <input class="col-span-1" type="number" placeholder="Party size">
+        <input class="col-span-1" type="number" placeholder="Party max">
+
+        <h1 class="text-2xl col-span-full">Imagem</h1>
         <input type="text" placeholder="Large image key">
         <input type="text" placeholder="Large image text">
 
         <input type="text" placeholder="Small image key">
         <input type="text" placeholder="Small image text">
 
-        <input type="time" placeholder="Start time">
-        <input type="time" placeholder="End time">
+        <h1 class="text-2xl col-span-full">Tempo</h1>
+        <input class="col-span-2" type="time" placeholder="Start time">
+        <input class="col-span-2" type="time" placeholder="End time">
 
-        <input type="number" placeholder="Party size">
-        <input type="number" placeholder="Party max">
-
+        <h1 class="text-2xl col-span-full">Botões</h1>
         <input type="text" placeholder="Button 1 label">
-        <input type="text" placeholder="Button 1 url">
+        <input type="text" placeholder="Button 1 URL">
 
         <input type="text" placeholder="Button 2 label">
-        <input type="text" placeholder="Button 2 url">
-
+        <input type="text" placeholder="Button 2 URL">
     </div>
+
+    <div class="preview">
+        <div class="presence-card">
+            <div class="presence-main">
+                <div class="presence-left">
+                    <img class="large-image" src="https://placehold.co/80x80" alt="Large Image">
+                    <img class="small-image" src="https://placehold.co/32x32" alt="Small Image">
+                </div>
+                <div class="presence-info">
+                    <div class="presence-details">Details Example</div>
+                    <div class="presence-state">State Example</div>
+                    <div class="presence-timer">00:12 elapsed</div>
+                </div>
+            </div>
+
+            <div class="presence-buttons">
+                <button>Button 1</button>
+                <button>Button 2</button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
-<script>
-
-    import "../main";
-
-</script>
 </html>

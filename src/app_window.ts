@@ -35,8 +35,6 @@ export function loadWindow(winConfig: WindowConfiguration) {
         })
     );
 
-    win.webContents.openDevTools();
-
 }
 
 export function openWindow(winConfig: WindowConfiguration) {

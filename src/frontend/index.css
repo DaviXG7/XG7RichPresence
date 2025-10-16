@@ -1,0 +1,120 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #2b2d31;
+    color: #fff;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.inputs input,
+.inputs select {
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    background-color: #1e1f22;
+    color: #ddd;
+    font-size: 14px;
+    outline: none;
+}
+
+.inputs input:focus,
+.inputs select:focus {
+    background-color: #292b2f;
+}
+
+.preview {
+    display: flex;
+    justify-content: center;
+}
+
+.presence-card {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    background-color: #1e1f22;
+    border-radius: 10px;
+    padding: 16px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 0 10px #0005;
+    position: relative;
+}
+
+.presence-main {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.presence-left {
+    position: relative;
+    margin-right: 16px;
+}
+
+.large-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+}
+
+.small-image {
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 3px solid #1e1f22;
+    background-color: #1e1f22;
+}
+
+.presence-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.presence-details {
+    font-weight: bold;
+    color: #fff;
+}
+
+.presence-state {
+    color: #ccc;
+    font-size: 14px;
+}
+
+.presence-timer {
+    color: #888;
+    font-size: 13px;
+}
+
+.presence-buttons {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.presence-buttons button {
+    background-color: #5865f2;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    margin-right: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    width: 100%;
+}
+
+.presence-buttons button:hover {
+    background-color: #4752c4;
+}
