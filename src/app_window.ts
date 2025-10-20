@@ -1,4 +1,4 @@
-import {app, BrowserWindow, ipcMain } from "electron";
+import {app, BrowserWindow, ipcMain, Tray, Menu, nativeImage } from "electron";
 import url = require("url");
 import {RichPresence} from "./rich_presence";
 import {SetActivity} from "@xhayper/discord-rpc";
@@ -10,6 +10,8 @@ export * from "colors";
 const configPath = path.join(__dirname, 'config.json');
 
 let win: BrowserWindow;
+let tray: Tray | null = null;
+let isQuitting = false;
 
 export class WindowConfiguration {
 
@@ -124,6 +126,60 @@ export class WindowConfiguration {
 
 }
 
+function createTray() {
+    let iconPath: string;
+
+    if (process.platform === 'win32') {
+        // Windows prefere .ico
+        iconPath = path.join(__dirname, 'icon.ico');
+        if (!fileS.existsSync(iconPath)) {
+            iconPath = path.join(__dirname, 'icon.png');
+        }
+    } else iconPath = path.join(__dirname, 'icon.png');
+
+
+    let trayIcon;
+    if (fileS.existsSync(iconPath)) {
+        trayIcon = nativeImage.createFromPath(iconPath);
+    } else {
+        trayIcon = nativeImage.createEmpty();
+        console.warn('Ícone do tray não encontrado em:', iconPath);
+    }
+
+    tray = new Tray(trayIcon);
+
+    const contextMenu = Menu.buildFromTemplate([
+        {
+            label: 'Mostrar',
+            click: () => {
+                if (win) {
+                    win.show();
+                    win.focus();
+                }
+            }
+        },
+        {
+            type: 'separator'
+        },
+        {
+            label: 'Sair',
+            click: () => {
+                isQuitting = true;
+                app.quit();
+            }
+        }
+    ]);
+
+    tray.setToolTip('Discord RPC');
+    tray.setContextMenu(contextMenu);
+
+    tray.on('click', () => {
+        if (win) {
+            win.show();
+            win.focus();
+        }
+    });
+}
 
 export function loadWindow(winConfig: WindowConfiguration) {
     win = new BrowserWindow({
@@ -145,7 +201,24 @@ export function loadWindow(winConfig: WindowConfiguration) {
         })
     );
 
-    loadConfig(win)
+    win.on('close', (event) => {
+        if (!isQuitting) {
+            event.preventDefault();
+            win.hide();
+
+            if (tray) {
+                tray.displayBalloon({
+                    title: 'Discord RPC',
+                    content: 'O aplicativo continua rodando em segundo plano'
+                });
+            }
+            return false;
+        }
+    });
+
+    createTray();
+
+    loadConfig(win);
 }
 
 
@@ -207,6 +280,10 @@ function buildActivity(data: any) {
 
 
 export function closeWindow() {
+    isQuitting = true;
+    if (tray) {
+        tray.destroy();
+    }
     if (process.platform !== "darwin") {
         app.quit();
     }
