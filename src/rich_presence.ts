@@ -2,6 +2,8 @@ import {Client, SetActivity} from "@xhayper/discord-rpc";
 
 //1167899920334868540
 
+const now = Date.now();
+
 export class RichPresence {
 
     activity: SetActivity;
@@ -15,14 +17,10 @@ export class RichPresence {
             partySize: 0,
             partyMax: 0,
             details: "",
-            startTimestamp: new Date(),
-            endTimestamp: new Date(),
+            startTimestamp: now,
             largeImageKey: "",
             largeImageText: "",
-            buttons: [
-                {label: "", url: ""},
-                {label: "", url: ""}
-            ],
+            buttons: [ ],
         };
 
     }
@@ -35,9 +33,11 @@ export class RichPresence {
 
     login(clientID: string) {
 
-        if (!this.client) {
-            this.client = new Client({ clientId: clientID })
-        }
+        this.disconnect()
+
+        console.log("LOGIN")
+
+        this.client = new Client({ clientId: clientID.trim() })
 
         this.client.on("ready", () => {
             this.setActivity(this.activity);
@@ -45,6 +45,16 @@ export class RichPresence {
 
         this.client.login().catch(console.error);
 
+    }
+
+    disconnect() {
+
+        console.log("DISCONNECT")
+
+        if (this.client) {
+            this.client.destroy().then(r => "destroyed");
+            this.client = undefined;
+        }
     }
 
 

@@ -10,65 +10,84 @@
 </head>
 <body>
 <div class="container">
+    <h1 class="text-3xl text-bold text-center">RICH PRESENCE - BETA</h1>
     <div class="inputs grid grid-cols-4 gap-4">
-            <h1 class="text-2xl col-span-full">Principal</h1>
-                <input class="col-span-2" type="text" placeholder="ID">
-                <select class="col-span-2">
-                    <option value="0">PLAYING</option>
-                    <option value="1">STREAMING</option>
-                    <option value="2">WATCHING</option>
-                    <option value="3">LISTENING</option>
-                    <option value="5">COMPETING</option>
-                </select>
+        <h1 class="text-2xl col-span-full">Principal</h1>
+        <input id="presence-id" class="col-span-2" type="text" placeholder="ID">
+        <select id="presence-type" class="col-span-2">
+            <option value="0">PLAYING</option>
+            <option value="3">WATCHING</option>
+            <option value="2">LISTENING</option>
+            <option value="5">COMPETING</option>
+        </select>
+
+        <input id="presence-details" class="col-span-full" type="text" placeholder="Details">
+        <input id="state" class="col-span-full" type="text" placeholder="State">
+
+        <h1 class="text-xl col-span-full">Party</h1>
+
+        <input id="party-size" class="col-span-2" type="number" placeholder="Party size">
+        <input id="party-max" class="col-span-2" type="number" placeholder="Party max">
+
+        <h1 class="text-xl col-span-full">Imagem</h1>
+        <input id="large-image-key" type="text" placeholder="Large image key">
+        <input id="large-image-text" type="text" placeholder="Large image text">
+        <input id="small-image-key" type="text" placeholder="Small image key">
+        <input id="small-image-text" type="text" placeholder="Small image text">
+
+<!--        <h1 class="text-xl col-span-full">Timer</h1>-->
+<!--        <select id="timer-mode" class="col-span-2">-->
+<!--            <option value="start">Desde início do app</option>-->
+<!--            <option value="current">Tempo atual</option>-->
+<!--            <option value="custom">Tempo personalizado</option>-->
+<!--        </select>-->
+<!--        <input id="timer-custom" class="col-span-2" type="datetime-local" placeholder="Segundos para personalizado" value="0">-->
 
 
-        <input class="col-span-full" type="text" placeholder="Details">
-
-        <h1 class="text-2xl col-span-full">Party</h1>
-
-        <input class="col-span-2" type="text" placeholder="State">
-        <input class="col-span-1" type="number" placeholder="Party size">
-        <input class="col-span-1" type="number" placeholder="Party max">
-
-        <h1 class="text-2xl col-span-full">Imagem</h1>
-        <input type="text" placeholder="Large image key">
-        <input type="text" placeholder="Large image text">
-
-        <input type="text" placeholder="Small image key">
-        <input type="text" placeholder="Small image text">
-
-        <h1 class="text-2xl col-span-full">Tempo</h1>
-        <input class="col-span-2" type="time" placeholder="Start time">
-        <input class="col-span-2" type="time" placeholder="End time">
-
-        <h1 class="text-2xl col-span-full">Botões</h1>
-        <input type="text" placeholder="Button 1 label">
-        <input type="text" placeholder="Button 1 URL">
-
-        <input type="text" placeholder="Button 2 label">
-        <input type="text" placeholder="Button 2 URL">
+        <h1 class="text-xl col-span-full">Botões</h1>
+        <input id="button1-label" type="text" placeholder="Button 1 label">
+        <input id="button1-url" type="text" placeholder="Button 1 URL">
+        <input id="button2-label" type="text" placeholder="Button 2 label">
+        <input id="button2-url" type="text" placeholder="Button 2 URL">
     </div>
 
+
     <div class="preview">
+        <h1 class="text-xl">Preview</h1>
         <div class="presence-card">
+            <div id="presence-activity" style="width: 100%; margin-bottom: 10px">Jogando:</div>
             <div class="presence-main">
                 <div class="presence-left">
-                    <img class="large-image" src="https://placehold.co/80x80" alt="Large Image">
-                    <img class="small-image" src="https://placehold.co/32x32" alt="Small Image">
+                    <img id="large-image" class="large-image" src="https://placehold.co/1024x1024" alt="Large Image">
+                    <img id="small-image" class="small-image" src="https://placehold.co/512x512" alt="Small Image">
                 </div>
                 <div class="presence-info">
-                    <div class="presence-details">Details Example</div>
-                    <div class="presence-state">State Example</div>
-                    <div class="presence-timer">00:12 elapsed</div>
+                    <div id="presence-details-text" class="presence-details"></div>
+                    <div id="presence-state-text" class="presence-state"></div>
+                    <div id="presence-large-image-text" class="presence-state hidden"></div>
+                    <div id="presence-timer" class="presence-timer"></div>
+                    <div id="presence-members" class="presence-state"></div>
                 </div>
             </div>
 
             <div class="presence-buttons">
-                <button>Button 1</button>
-                <button>Button 2</button>
+                <a id="presence-button-1" class="hidden"></a>
+                <a id="presence-button-2" class="hidden"></a>
             </div>
         </div>
     </div>
+
+    <p id="message" class="text-center hidden m-0"></p>
+
+    <div class="preview-buttons mt-4 flex gap-4 justify-center">
+        <button id="connect-btn" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Conectar</button>
+        <button id="update-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Atualizar presença</button>
+        <button id="disconnect-btn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">Desconectar</button>
+        <button id="save-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded">Salvar configuração</button>
+    </div>
+
 </div>
 </body>
+
+<script src="index.js"> </script>
 </html>

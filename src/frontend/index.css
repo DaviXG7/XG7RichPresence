@@ -31,6 +31,8 @@ body {
 .preview {
     display: flex;
     justify-content: center;
+    flex-direction: column;
+    align-items: center;
 }
 
 .presence-card {
@@ -39,7 +41,7 @@ body {
     flex-direction: column;
     background-color: #1e1f22;
     border-radius: 10px;
-    padding: 16px;
+    padding: 16px 16px 25px;
     max-width: 400px;
     width: 100%;
     box-shadow: 0 0 10px #0005;
@@ -91,7 +93,7 @@ body {
 }
 
 .presence-timer {
-    color: #888;
+    color: #0cc021;
     font-size: 13px;
 }
 
@@ -101,9 +103,10 @@ body {
     flex-direction: column;
     gap: 10px;
     width: 100%;
+    height: 65px;
 }
 
-.presence-buttons button {
+.presence-buttons a {
     background-color: #5865f2;
     color: #fff;
     border: none;
@@ -113,8 +116,9 @@ body {
     cursor: pointer;
     font-size: 13px;
     width: 100%;
+    text-align: center;
 }
 
-.presence-buttons button:hover {
+.presence-buttons a:hover {
     background-color: #4752c4;
 }
