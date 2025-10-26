@@ -1,93 +1,277 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Discord Rich Presence Preview</title>
-    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="index.css" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-zinc-950 text-zinc-100">
+    <header
+      class="sticky top-0 z-10 bg-zinc-950/70 backdrop-blur border-b border-zinc-900"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between"
+      >
+        <h1 class="text-2xl md:text-3xl font-bold tracking-tight">
+          RICH PRESENCE <span class="bg-gradient-to-r from-violet-600 to-violet-700 inline-block text-transparent bg-clip-text">BETA</span>
+        </h1>
+        <div id="client-status" class="badge">Client ID not set</div>
+      </div>
+    </header>
 
-</head>
-<body>
-<div class="container">
-    <h1 class="text-3xl text-bold text-center">RICH PRESENCE - BETA</h1>
-    <div class="inputs grid grid-cols-4 gap-4">
-        <h1 class="text-2xl col-span-full">Principal</h1>
-        <input id="presence-id" class="col-span-2" type="text" placeholder="ID">
-        <select id="presence-type" class="col-span-2">
-            <option value="0">PLAYING</option>
-            <option value="3">WATCHING</option>
-            <option value="2">LISTENING</option>
-            <option value="5">COMPETING</option>
-        </select>
+    <main
+      class="max-w-7xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-2 gap-6"
+    >
+      <!-- LEFT: FORM -->
+      <section class="card p-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 inputs">
+          <div>
+            <label class="label" for="presence-id">Client ID</label>
+            <input
+              id="presence-id"
+              class="input col-span-2"
+              type="text"
+              placeholder="ID"
+            />
+          </div>
 
-        <input id="presence-details" class="col-span-full" type="text" placeholder="Details">
-        <input id="state" class="col-span-full" type="text" placeholder="State">
+          <div>
+            <label class="label" for="presence-type">Tipo</label>
+            <select id="presence-type" class="input col-span-2">
+              <option value="0">PLAYING</option>
+              <option value="3">WATCHING</option>
+              <option value="2">LISTENING</option>
+              <option value="5">COMPETING</option>
+            </select>
+          </div>
 
-        <h1 class="text-xl col-span-full">Party</h1>
+          <div class="md:col-span-2">
+            <label class="label" for="presence-details"
+              >Details <span class="kpi" id="details-count">0/128</span></label
+            >
+            <input
+              id="presence-details"
+              class="input col-span-full"
+              type="text"
+              placeholder="Details"
+              maxlength="128"
+            />
+          </div>
 
-        <input id="party-size" class="col-span-2" type="number" placeholder="Party size">
-        <input id="party-max" class="col-span-2" type="number" placeholder="Party max">
+          <div class="md:col-span-2">
+            <label class="label" for="state"
+              >State <span class="kpi" id="state-count">0/128</span></label
+            >
+            <input
+              id="state"
+              class="input col-span-full"
+              type="text"
+              placeholder="State"
+              maxlength="128"
+            />
+          </div>
 
-        <h1 class="text-xl col-span-full">Imagem</h1>
-        <input id="large-image-key" type="text" placeholder="Large image key">
-        <input id="large-image-text" type="text" placeholder="Large image text">
-        <input id="small-image-key" type="text" placeholder="Small image key">
-        <input id="small-image-text" type="text" placeholder="Small image text">
+          <h2 class="sec-title">Party</h2>
+          <div>
+            <label class="label" for="party-size">Tamanho atual</label>
+            <input
+              id="party-size"
+              class="input col-span-2"
+              type="number"
+              placeholder="Party size"
+              min="0"
+              step="1"
+            />
+          </div>
+          <div>
+            <label class="label" for="party-max">Capacidade</label>
+            <input
+              id="party-max"
+              class="input col-span-2"
+              type="number"
+              placeholder="Party max"
+              min="0"
+              step="1"
+            />
+            <p class="help">Deixe ambos em branco para ocultar.</p>
+          </div>
 
-<!--        <h1 class="text-xl col-span-full">Timer</h1>-->
-<!--        <select id="timer-mode" class="col-span-2">-->
-<!--            <option value="start">Desde início do app</option>-->
-<!--            <option value="current">Tempo atual</option>-->
-<!--            <option value="custom">Tempo personalizado</option>-->
-<!--        </select>-->
-<!--        <input id="timer-custom" class="col-span-2" type="datetime-local" placeholder="Segundos para personalizado" value="0">-->
+          <h2 class="sec-title">Imagem</h2>
+          <div>
+            <label class="label" for="large-image-key"
+              >Large image key/URL</label
+            >
+            <input
+              id="large-image-key"
+              class="input"
+              type="text"
+              placeholder="Large image key"
+            />
+          </div>
+          <div>
+            <label class="label" for="large-image-text">Large image text</label>
+            <input
+              id="large-image-text"
+              class="input"
+              type="text"
+              placeholder="Large image text"
+              maxlength="128"
+            />
+          </div>
+          <div>
+            <label class="label" for="small-image-key"
+              >Small image key/URL</label
+            >
+            <input
+              id="small-image-key"
+              class="input"
+              type="text"
+              placeholder="Small image key"
+            />
+          </div>
+          <div>
+            <label class="label" for="small-image-text">Small image text</label>
+            <input
+              id="small-image-text"
+              class="input"
+              type="text"
+              placeholder="Small image text"
+              maxlength="128"
+            />
+          </div>
 
-
-        <h1 class="text-xl col-span-full">Botões</h1>
-        <input id="button1-label" type="text" placeholder="Button 1 label">
-        <input id="button1-url" type="text" placeholder="Button 1 URL">
-        <input id="button2-label" type="text" placeholder="Button 2 label">
-        <input id="button2-url" type="text" placeholder="Button 2 URL">
-    </div>
-
-
-    <div class="preview">
-        <h1 class="text-xl">Preview</h1>
-        <div class="presence-card">
-            <div id="presence-activity" style="width: 100%; margin-bottom: 10px">Jogando:</div>
-            <div class="presence-main">
-                <div class="presence-left">
-                    <img id="large-image" class="large-image" src="https://placehold.co/1024x1024" alt="Large Image">
-                    <img id="small-image" class="small-image" src="https://placehold.co/512x512" alt="Small Image">
-                </div>
-                <div class="presence-info">
-                    <div id="presence-details-text" class="presence-details"></div>
-                    <div id="presence-state-text" class="presence-state"></div>
-                    <div id="presence-large-image-text" class="presence-state hidden"></div>
-                    <div id="presence-timer" class="presence-timer"></div>
-                    <div id="presence-members" class="presence-state"></div>
-                </div>
-            </div>
-
-            <div class="presence-buttons">
-                <a id="presence-button-1" class="hidden"></a>
-                <a id="presence-button-2" class="hidden"></a>
-            </div>
+          <h2 class="sec-title">Botões</h2>
+          <div>
+            <label class="label" for="button1-label">Button 1 label</label>
+            <input
+              id="button1-label"
+              class="input"
+              type="text"
+              placeholder="Button 1 label"
+            />
+          </div>
+          <div>
+            <label class="label" for="button1-url">Button 1 URL</label>
+            <input
+              id="button1-url"
+              class="input"
+              type="text"
+              placeholder="Button 1 URL"
+            />
+          </div>
+          <div>
+            <label class="label" for="button2-label">Button 2 label</label>
+            <input
+              id="button2-label"
+              class="input"
+              type="text"
+              placeholder="Button 2 label"
+            />
+          </div>
+          <div>
+            <label class="label" for="button2-url">Button 2 URL</label>
+            <input
+              id="button2-url"
+              class="input"
+              type="text"
+              placeholder="Button 2 URL"
+            />
+          </div>
         </div>
-    </div>
+      </section>
 
-    <p id="message" class="text-center hidden m-0"></p>
+      <section class="sticky top-20 self-start space-y-4">
+        <div class="presence-card">
+          <div class="text-sm text-zinc-400 mb-3" id="presence-activity">
+            Playing
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="presence-left">
+              <img
+                id="large-image"
+                class="large"
+                src="https://placehold.co/512x512?text=1024×1024"
+                alt="Large asset"
+              />
+              <img
+                id="small-image"
+                class="small"
+                src="https://placehold.co/256x256?text=512×512"
+                alt="Small asset"
+              />
+            </div>
+            <div class="flex-1 min-w-0">
+              <p
+                id="presence-details-text"
+                class="text-zinc-200 mt-1 truncate"
+              ></p>
+              <p
+                id="presence-state-text"
+                class="text-zinc-400 mt-0.5 truncate"
+              ></p>
+              <p
+                id="presence-large-image-text"
+                class="text-zinc-500 mt-0.5 hidden"
+              ></p>
+                <span class="kpi mono text-green-500" id="presence-timer">00:00:00</span>
+              <p id="presence-members" class="text-zinc-400 mt-1"></p>
+            </div>
+          </div>
+          <div class="mt-4 flex gap-2 flex-wrap">
+            <a
+              id="presence-button-1"
+              class="btn btn-primary hidden"
+              target="_blank"
+              rel="noreferrer noopener"
+            ></a>
+            <a
+              id="presence-button-2"
+              class="btn btn-primary hidden"
+              target="_blank"
+              rel="noreferrer noopener"
+            ></a>
+          </div>
+        </div>
 
-    <div class="preview-buttons mt-4 flex gap-4 justify-center">
-        <button id="connect-btn" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Conectar</button>
-        <button id="update-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Atualizar presença</button>
-        <button id="disconnect-btn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">Desconectar</button>
-        <button id="save-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded">Salvar configuração</button>
-    </div>
+        <div class="card p-4 text-sm text-zinc-400">
+          <p class="mb-1">Dicas rápidas:</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li>
+              Assets por <em>key</em> vêm do app do Discord; para pré-visualizar
+              aqui, pode usar uma URL direta.
+            </li>
+            <li>
+              Máximo de 2 botões. URLs devem começar com <code>http://</code> ou
+              <code>https://</code>.
+            </li>
+            <li>Details/State: 2–128 caracteres.</li>
+          </ul>
+        </div>
+          <div class="self-end flex flex-col gap-2">
+              <p id="message" class="mt-2 text-sm text-center hidden"></p>
 
-</div>
-</body>
+              <div class="md:col-span-2 flex gap-2 pt-2">
+                  <button id="connect-btn" class="btn btn-primary">Conectar</button>
+                  <button id="update-btn" class="btn btn-blue">Atualizar</button>
+                  <button id="disconnect-btn" class="btn btn-danger">
+                      Desconectar
+                  </button>
+                  <button id="save-btn" class="btn btn-warn">Salvar</button>
+              </div>
+          </div>
 
-<script src="index.js"> </script>
+
+      </section>
+    </main>
+
+    <script src="index.js"></script>
+  </body>
 </html>
