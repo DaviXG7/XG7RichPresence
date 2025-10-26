@@ -1,12 +1,4 @@
-let ipcRenderer;
-try {
-  ({ ipcRenderer } = require("electron"));
-} catch {
-  if (window.electron && window.electron.ipc) ipcRenderer = window.electron.ipc;
-  else {
-    ipcRenderer = { send() {}, on() {}, removeAllListeners() {} };
-  }
-}
+const ipcRenderer = window.electron;
 
 // Elements
 const elements = {
@@ -62,14 +54,55 @@ const presenceState = {
 
 let previewStartTime = Date.now();
 
+let profileCache = undefined
+let assetsCache = undefined
+
 // Utils
-function isHttpUrl(u) {
-  try {
-    const x = new URL(u);
-    return x.protocol === "http:" || x.protocol === "https:";
-  } catch {
-    return false;
-  }
+
+async function requestProfile(force = false) {
+
+    if (profileCache && !force) return
+
+    if (!presenceState.id) return
+
+    return fetch(`https://discord.com/api/v10/applications/${presenceState.id}/rpc`)
+        .then(res => res.json())
+        .then(res => {
+            profileCache = res
+
+            return fetch(`https://discordapp.com/api/oauth2/applications/${presenceState.id}/assets`)
+                .then(res => res.json())
+                .then(res => {
+                    assetsCache = res
+                })
+                .catch(err => {
+                    console.log("ERRO AO BUSCAR ASSETS: " + err)
+                })
+        })
+        .catch(err => {
+            console.log("ERRO AO BUSCAR IMAGEM: " + err)
+        })
+
+
+}
+
+function getPhotoURL(key, isLarge = false) {
+    if (!profileCache) return Promise.resolve(undefined);
+
+    const chosenKey = assetsCache?.find(a => a.name === key);
+
+    if (chosenKey) {
+        return Promise.resolve(`https://cdn.discordapp.com/app-assets/${profileCache.id}/${chosenKey.id}.png`);
+    } else if (isLarge && profileCache.icon) {
+        return Promise.resolve(`https://cdn.discordapp.com/app-icons/${profileCache.id}/${profileCache.icon}.png`);
+    } else {
+        return Promise.resolve(undefined);
+    }
+}
+
+
+function isValidKey(u) {
+  return u && u.length > 0 && u.length <= 128;
 }
 function formatTime(seconds) {
   const h = Math.floor(seconds / 3600)
@@ -110,79 +143,92 @@ function updateCounters() {
 }
 
 // Update view
-function updateDisplay() {
-  const typeTextMap = {
-    0: "Playing",
-    2: "Listening",
-    3: "Watching",
-    5: "Competing in",
-  };
-  const typeValue = parseInt(elements.type.value || "0", 10);
-  const typeTitle = typeTextMap[typeValue] || "Playing";
+async function updateDisplay() {
 
-  presenceElements.activityText.innerText = typeTitle;
-  // Header info
-  if (elements.id.value) {
-    presenceElements.clientStatus.textContent = `Client: ${elements.id.value}`;
-    presenceElements.clientStatus.style.borderColor = "#7c3aed";
-    presenceElements.clientStatus.style.color = "#c4b5fd";
-  }
+    await requestProfile();
 
-  if (typeValue === 0) {
-    // PLAYING: Details vira "Application Name" na sua UI,
-    // e o State + party aparecem abaixo, como no seu mock
-    presenceElements.detailsText.innerText = "Application Name";
-    presenceElements.stateText.innerText = presenceState.details;
+    const typeTextMap = {
+        0: "Playing",
+        2: "Listening",
+        3: "Watching",
+        5: "Competing in",
+    };
+    const typeValue = parseInt(elements.type.value || "0", 10);
+    const typeTitle = typeTextMap[typeValue] || "Playing";
 
-    // Large text: usa o state quando não há party, senão mostra members
-    presenceElements.largeImageText.innerText = presenceState.state;
-
-    if (
-      (presenceState.partySize || 0) > 0 ||
-      (presenceState.partyMax || 0) > 0
-    ) {
-      presenceElements.members.innerText = `${presenceState.state} (${presenceState.partySize} of ${presenceState.partyMax})`;
-      presenceElements.members.classList.remove("hidden");
-      presenceElements.largeImageText.classList.add("hidden");
-    } else {
-      presenceElements.members.classList.add("hidden");
-      presenceElements.largeImageText.classList.remove("hidden");
+    presenceElements.activityText.innerText = typeTitle;
+    // Header info
+    if (elements.id.value) {
+        presenceElements.clientStatus.textContent = `Client: ${elements.id.value}`;
+        presenceElements.clientStatus.style.borderColor = "#7c3aed";
+        presenceElements.clientStatus.style.color = "#c4b5fd";
     }
-  } else {
-    // Outros tipos: mostra details/state diretamente
-      presenceElements.activityText.innerText = `${typeTitle} Application Name`;
-    presenceElements.detailsText.innerText = presenceState.details;
-    presenceElements.stateText.innerText = presenceState.state;
-    presenceElements.largeImageText.innerText =
-      presenceState.largeImageText || "";
-    presenceElements.members.classList.add("hidden");
-    presenceElements.largeImageText.classList.remove("hidden");
-  }
 
-  // Imagens: se for URL, usa; se não, placeholder
-  presenceElements.largeImage.src = isHttpUrl(presenceState.largeImageKey)
-    ? presenceState.largeImageKey
-    : "https://placehold.co/512x512?text=1024×1024";
+    if (typeValue === 0) {
+        // PLAYING: Details vira "Application Name" na sua UI,
+        // e o State + party aparecem abaixo, como no seu mock
+        presenceElements.detailsText.innerText = profileCache.name ? profileCache.name : "Application Name";
+        presenceElements.stateText.innerText = presenceState.details;
 
-  presenceElements.smallImage.src = isHttpUrl(presenceState.smallImageKey)
-    ? presenceState.smallImageKey
-    : "https://placehold.co/256x256?text=512×512";
+        // Large text: usa o state quando não há party, senão mostra members
+        presenceElements.largeImageText.innerText = presenceState.state;
 
-  // Botões
-  if (presenceState.button1Label && presenceState.button1URL) {
-    presenceElements.button1.classList.remove("hidden");
-    presenceElements.button1.innerText = presenceState.button1Label;
-    presenceElements.button1.href = presenceState.button1URL;
-  } else presenceElements.button1.classList.add("hidden");
+        if (
+            (presenceState.partySize || 0) > 0 ||
+            (presenceState.partyMax || 0) > 0
+        ) {
+            presenceElements.members.innerText = `${presenceState.state} (${presenceState.partySize} of ${presenceState.partyMax})`;
+            presenceElements.members.classList.remove("hidden");
+            presenceElements.largeImageText.classList.add("hidden");
+        } else {
+            presenceElements.members.classList.add("hidden");
+            presenceElements.largeImageText.classList.remove("hidden");
+        }
+    } else {
+        // Outros tipos: mostra details/state diretamente
+        presenceElements.activityText.innerText = `${typeTitle} Application Name`;
+        presenceElements.detailsText.innerText = presenceState.details;
+        presenceElements.stateText.innerText = presenceState.state;
+        presenceElements.largeImageText.innerText =
+            presenceState.largeImageText || "";
+        presenceElements.members.classList.add("hidden");
+        presenceElements.largeImageText.classList.remove("hidden");
+    }
 
-  if (presenceState.button2Label && presenceState.button2URL) {
-    presenceElements.button2.classList.remove("hidden");
-    presenceElements.button2.innerText = presenceState.button2Label;
-    presenceElements.button2.href = presenceState.button2URL;
-  } else presenceElements.button2.classList.add("hidden");
+    // Imagens: se for URL, usa; se não, placeholder
 
-  updateCounters();
-  updateTimerDisplay();
+    getPhotoURL(presenceState.largeImageKey, true).then(url => presenceElements.largeImage.src = url)
+
+    getPhotoURL(presenceState.smallImageKey, false).then(url => {
+        if (!url) {
+            presenceElements.smallImage.classList.add("hidden")
+            return
+        }
+        presenceElements.smallImage.classList.remove("hidden")
+        presenceElements.smallImage.src = url
+    })
+
+
+    presenceElements.largeImage.title = presenceState.largeImageText;
+    presenceElements.smallImage.title = presenceState.smallImageText;
+
+
+    // Botões
+    if (presenceState.button1Label && presenceState.button1URL) {
+        presenceElements.button1.classList.remove("hidden");
+        presenceElements.button1.innerText = presenceState.button1Label;
+        presenceElements.button1.href = presenceState.button1URL;
+    } else presenceElements.button1.classList.add("hidden");
+
+    if (presenceState.button2Label && presenceState.button2URL) {
+        presenceElements.button2.classList.remove("hidden");
+        presenceElements.button2.innerText = presenceState.button2Label;
+        presenceElements.button2.href = presenceState.button2URL;
+    } else presenceElements.button2.classList.add("hidden");
+
+    updateCounters();
+    updateTimerDisplay();
+
 }
 
 function updateState(updates) {
@@ -213,7 +259,7 @@ elements.type.addEventListener("change", () => {
 });
 
 // Preview inicial
-updateDisplay();
+updateDisplay().then(r => console.log("FIRST DISPLAY UPDATED"));
 
 // Buttons (IPC)
 const connectBtn = document.getElementById("connect-btn");
@@ -249,14 +295,17 @@ disconnectBtn.addEventListener("click", () => {
 });
 
 updateBtn.addEventListener("click", () => {
-  // pequena checagem
-  const ps = parseInt(elements.partySize.value || "0", 10);
-  const pm = parseInt(elements.partyMax.value || "0", 10);
-  if (ps && pm && ps > pm)
-    return showMsg("PartySize não pode ser maior que PartyMax", false);
+    // pequena checagem
+    const ps = parseInt(elements.partySize.value || "0", 10);
+    const pm = parseInt(elements.partyMax.value || "0", 10);
+    if (ps && pm && ps > pm)
+        return showMsg("PartySize não pode ser maior que PartyMax", false);
 
-  ipcRenderer.send("update-presence", presenceState);
-  showMsg("Presença atualizada.");
+    ipcRenderer.send("update-presence", presenceState);
+
+    requestProfile(true).then(() => updateDisplay());
+
+    showMsg("Presença atualizada.");
 });
 
 saveBtn.addEventListener("click", () => {
@@ -266,6 +315,8 @@ saveBtn.addEventListener("click", () => {
 
 // Carregar config do main
 ipcRenderer.on("on-config-load", (_evt, config) => {
+    console.log("ON CONFIG LOAD")
+    console.log("ON CONFIG LOAD " + JSON.stringify(config))
   if (!config || Object.keys(config).length === 0) return;
   Object.assign(presenceState, config);
 
@@ -285,8 +336,7 @@ ipcRenderer.on("on-config-load", (_evt, config) => {
     presenceElements.clientStatus.style.borderColor = "#7c3aed";
     presenceElements.clientStatus.style.color = "#c4b5fd";
   }
-
-  updateDisplay();
+    requestProfile(true).then(() => updateDisplay());
 });
 
 // Mensagens do main

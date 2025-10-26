@@ -204,10 +204,11 @@ export function loadWindow(winConfig: WindowConfiguration) {
     frame: false,
     resizable: false,
     titleBarStyle: "hidden",
-    webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
-    },
+      webPreferences: {
+          nodeIntegration: false,
+          contextIsolation: true,
+          preload: path.join(__dirname, "preload.js"),
+      }
   });
 
   win.loadURL(
@@ -231,6 +232,7 @@ export function loadWindow(winConfig: WindowConfiguration) {
       }
       return false;
     }
+
   });
 
   createTray();

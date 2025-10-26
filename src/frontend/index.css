@@ -71,11 +71,12 @@ body {
   width: 100%;
 }
 .btn-primary {
-  background: #7c3aed;
+  background: #302d3f;
   color: #fff;
+    border: 1px solid #51486b;
 }
 .btn-primary:hover {
-  background: #8b5cf6;
+    background: #472c94;
 }
 .btn-blue {
   background: #0284c7;
@@ -127,12 +128,12 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 .presence-left .small {
-  position: absolute;
-  right: -6px;
-  bottom: -6px;
-  width: 36px;
-  height: 36px;
-  border-radius: 9999px;
-  border: 3px solid #18181b;
-  object-fit: cover;
+    position: absolute;
+    right: -6px;
+    bottom: -6px;
+    width: 36px;
+    height: 36px;
+    border-radius: 9999px;
+    background: #0b0b0c;
+    object-fit: cover;
 }
